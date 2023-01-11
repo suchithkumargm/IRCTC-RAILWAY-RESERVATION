@@ -103,7 +103,7 @@ public class AdminProfile extends JFrame implements ActionListener {
         back.setBackground(Color.white);
         back.addActionListener(this);
 
-        add(back);
+        image.add(back);
         setSize(1000, 700);
         setVisible(true);
         setLocation(180, 20);
@@ -117,6 +117,6 @@ public class AdminProfile extends JFrame implements ActionListener {
 }
 
     public static void main(String[] args) {
-        new AdminProfile("suchith");
+        new AdminProfile("shashidhar");
     }
 }
