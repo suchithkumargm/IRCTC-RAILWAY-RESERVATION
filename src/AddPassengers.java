@@ -344,6 +344,6 @@ public class AddPassengers extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         BookedTrain details = new BookedTrain(22626, "Mas Double Decker", "sbc", "csmt", "20:40", "20:15", 360, 30);
-        new AddPassengers(details, "shas","01-04-2023");
+        new AddPassengers(details, "suchith","01-04-2023");
     }
 }

@@ -10,8 +10,6 @@ public class AdminLogin extends JFrame implements ActionListener{
     JTextField adminId,otp;
     JPasswordField password;
     JButton login,back;
-    JLabel otpLabel,image;
-    JPanel panel;
     AdminLogin(){
         setTitle("IRCTC");
         setLayout(null);  
@@ -20,19 +18,9 @@ public class AdminLogin extends JFrame implements ActionListener{
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("img/adminLogin.png"));
         Image i2 = i1.getImage().getScaledInstance(983, 660, Image.SCALE_DEFAULT);
         ImageIcon i3 = new ImageIcon(i2);
-        image = new JLabel(i3);
+        JLabel image = new JLabel(i3);
         image.setBounds(0, 0, 983, 660);
         add(image); 
-
-        otpLabel =new JLabel("Sending OTP. Please Wait....");
-        otpLabel.setBounds(0,0,300,40);
-        otpLabel.setBackground(Color.BLACK);
-        otpLabel.setFont(new Font("Raleway", Font.BOLD, 20));
-        otpLabel.setVisible(false);
-        panel=new JPanel();
-        panel.setBounds(255,370,300,40);
-        panel.add(otpLabel);
-        image.add(panel);
 
         adminId =new JTextField("Admin Id");
         adminId.setBounds(250,240,490,30);
@@ -56,11 +44,6 @@ public class AdminLogin extends JFrame implements ActionListener{
         login.setBackground(Color.decode("#e87020"));
         login.setFont(new Font("Raleway", Font.BOLD, 24));
         login.setBorder(null);
-        // login.addActionListener(e -> {
-        //     if (!otpLabel.isVisible()) {
-        //         otpLabel.setVisible(true);
-        //     }
-        // });
         login.addActionListener(this);
         image.add(login);
 
@@ -96,9 +79,6 @@ public class AdminLogin extends JFrame implements ActionListener{
     }
     public void actionPerformed(ActionEvent e){
         if(e.getSource()==login){
-            if (!otpLabel.isVisible()) {
-                otpLabel.setVisible(true);
-            }
             genOtp=String.copyValueOf(OTP(4));
             System.out.println(genOtp);
             String admin_id=adminId.getText();
