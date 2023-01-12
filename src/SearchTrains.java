@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 
 import java.awt.*;
@@ -7,16 +9,17 @@ import java.time.*;
 import java.util.Date;
 import com.toedter.calendar.JDateChooser;
 import java.sql.*;
+import java.text.DateFormat;
 
 public class SearchTrains extends JFrame implements ActionListener{
     String FromStations[];
     JComboBox From, To;
     JButton Search,back;
     JDateChooser dateChooser;
-    String userName;
+    String user_name;
 
-    SearchTrains(String userName) {
-        this.userName=userName;
+    SearchTrains(String user_name) {
+        this.user_name=user_name;
         setTitle("IRCTC");
         setLayout(null);
 
@@ -28,6 +31,9 @@ public class SearchTrains extends JFrame implements ActionListener{
         image.setBounds(0, 0, 983, 660);
         add(image);
 
+        //username text feild
+        // String fromstations[]={"bay","chi","del","dev","ham","kdy","ken","ksr","sol","ypr"};
+        
         try{
         Conn c=new Conn();
         int count=0;
@@ -143,14 +149,17 @@ public class SearchTrains extends JFrame implements ActionListener{
                     error.printStackTrace();
                 }
                 String day=getDay(dateChooser.getDate());
+                Date date = dateChooser.getDate();
+                String date_of_travel = DateFormat.getDateInstance().format(date);
+                System.out.println(date_of_travel);
                 setVisible(false);
-                new BookTickets(source, destination,day,userName).setVisible(true);
+                new BookTickets(source, destination,day,user_name,date_of_travel).setVisible(true);
                 // System.out.println(source);
             }
         }
         else if(e.getSource()==back){
             setVisible(false);
-            new HomePage(userName).setVisible(true);
+            new HomePage(user_name).setVisible(true);
         } 
     }catch(Exception error){
         JOptionPane.showMessageDialog(null,"Please fill all the details");  

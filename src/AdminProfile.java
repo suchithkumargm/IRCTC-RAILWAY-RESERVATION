@@ -67,7 +67,7 @@ public class AdminProfile extends JFrame implements ActionListener {
         try{
             Conn c=new Conn();
 
-            String query="select admin_id ,concat(first_name,last_name) as Name,gender,address from admin where admin_id='"+adminId+"';";
+            String query="select admin_id ,concat(first_name,' ',last_name) as Name,gender,address from admin where admin_id='"+adminId+"';";
             System.out.println(query);
             ResultSet rs=c.s.executeQuery(query);
 
@@ -81,7 +81,7 @@ public class AdminProfile extends JFrame implements ActionListener {
                     System.out.println(adminId+" "+Name+ " "+gender+" "+address+" ");
                 }
 
-                admin.setText(adminId);
+                admin.setText(adminId.toUpperCase());
                 name.setText(Name);
                 gen.setText(gender);
                 add.setText(address);

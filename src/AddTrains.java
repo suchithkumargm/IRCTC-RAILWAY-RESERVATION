@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class AddTrains  extends JFrame implements ActionListener {
     JPanel panel ;
-    JTextField trainNo,trainName,seats,stopNo,time,cost;
+    JTextField trainNo,trainName,seats,time;
     JComboBox stationId;
     JButton saveTrain,Add, back, delete, submit;
     JTable table = new JTable();
@@ -19,13 +19,13 @@ public class AddTrains  extends JFrame implements ActionListener {
     DefaultTableModel model;
     String userName;
     String FromStations[];
-    String loginId,train_no,train_name,End_seats;
+    String adminId,train_no,train_name,End_seats;
     JRadioButton Mon,Tue,Wed,Thur,Fri,Sat,Sun;
     String Monday="n",Tuesday="n",Wednesday="n",Thursday="n",Friday="n",Saturday="n",Sunday="n";
     static Box vertical = Box.createVerticalBox();
         
-    AddTrains(String loginId) {
-        this.loginId=loginId;
+    AddTrains(String adminId) {
+        this.adminId=adminId;
         setTitle("IRCTC");
 
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("img/addTrains.png"));
@@ -145,7 +145,7 @@ public class AddTrains  extends JFrame implements ActionListener {
             }
 
         stationId = new JComboBox(FromStations);
-        stationId.setBounds(290, 305, 170, 30);
+        stationId.setBounds(45, 305, 170, 30);
         stationId.setFont(new Font("Raleway", Font.BOLD, 15));
         stationId.setForeground(Color.black);
         stationId.setBackground(Color.white);
@@ -161,7 +161,7 @@ public class AddTrains  extends JFrame implements ActionListener {
         image.add(stationId);
 
         time = new JTextField("Time");
-        time.setBounds(532, 303, 150, 30);
+        time.setBounds(290, 303, 150, 30);
         time.setFont(new Font("Raleway", Font.PLAIN, 17));
         time.setForeground(Color.gray);
         time.setBorder(null);
@@ -199,7 +199,7 @@ public class AddTrains  extends JFrame implements ActionListener {
         panel.setLayout(null);
         panel.setBackground(Color.white);
 
-        cols = new String[] { "stop number", "station id", "time","cost"};
+        cols = new String[] { "station id", "time"};
 
         model = (DefaultTableModel) table.getModel();
 
@@ -256,8 +256,7 @@ public class AddTrains  extends JFrame implements ActionListener {
         }
         
         if(e.getSource()==saveTrain){
-            if(trainNo.getText().equals("") ||trainNo.getText().equals("Train NO") ||trainName.getText().equals("")||
-            seats.getText().equals("")){
+            if(trainNo.getText().equals("") ||trainNo.getText().equals("Train NO") ||trainName.getText().equals("")||trainName.getText().equals("Train Name")||seats.getText().equals("")||seats.getText().equals("Seats")){
                 JOptionPane.showMessageDialog(null,"Please Fill all the details");
             }
             else{
@@ -292,22 +291,13 @@ public class AddTrains  extends JFrame implements ActionListener {
         }
     }
         else if (e.getSource() == Add) {
-            // try{
-
-            // }catch(Exception error){
-            //     System.out.println(error);
-            // }
             panel.setVisible(true);
-            if (stopNo.getText().equals("") || stationId.getSelectedItem().equals("") ||  time.getText().equals("") || cost.getText().equals("")) {
+            if (stationId.getSelectedItem().equals("") ||  time.getText().equals("") ) {
                 JOptionPane.showMessageDialog(null, "Please fill all the details");
             } 
-            // else {
-            //     if(!stations.contains(stationId.getSelectedItem())){
-                
-            //         JOptionPane.showMessageDialog(null, "Invalid station id");
-            //     }
+        
                 else{
-                    model.addRow(new Object[] { stopNo.getText(), stationId.getSelectedItem(),time.getText() ,cost.getText()});
+                    model.addRow(new Object[] { stationId.getSelectedItem(),time.getText()});
                 }
             }
         else if (e.getSource() == delete) {
@@ -318,22 +308,22 @@ public class AddTrains  extends JFrame implements ActionListener {
             }
         } else if (e.getSource() == back) {
             setVisible(false);
-            new Admin(loginId);
+            new Admin(adminId);
         } else if (e.getSource() == submit) {
-            try {int start_seat=0;
+            try {
+                int start_seat=0;
                 Conn c = new Conn();
-                String query1="insert into trains values ("+Integer.parseInt(train_no)+",'"+train_name+"',"+start_seat+","+Integer.parseInt(End_seats)+",'"+loginId+"');";
+                String query1="insert into trains values ('"+Integer.parseInt(train_no)+"','"+train_name+"',"+start_seat+","+Integer.parseInt(End_seats)+",'"+adminId+"');";
                 c.s.executeUpdate(query1);
-                String query ="insert into schedule values("+Integer.parseInt(train_no)+",'"+Monday+"','"+Tuesday+"','"+Wednesday+"','"+Thursday+"','"+Friday+"','"+Saturday+"','"+Sunday+"');";
+                String query ="insert into schedule values('"+Integer.parseInt(train_no)+"','"+Monday+"','"+Tuesday+"','"+Wednesday+"','"+Thursday+"','"+Friday+"','"+Saturday+"','"+Sunday+"');";
                 c.s.executeUpdate(query);
                 int rows = table.getRowCount();
                 System.out.println(rows);
                 for (int row = 0; row < rows; row++) {
-                    String stopNo = (String) table.getValueAt(row, 0);
                     String stationId= "";
                     try{
                         // Conn c=new Conn();
-                    ResultSet rs=c.s.executeQuery("select station_id from stations where station_name='"+(String)table.getValueAt(row, 1)+"';");
+                    ResultSet rs=c.s.executeQuery("select station_id from stations where station_name='"+(String)table.getValueAt(row, 0)+"';");
                 if(rs.next()){
                     stationId=rs.getString("station_id");
                     System.out.println(stationId);
@@ -341,35 +331,58 @@ public class AddTrains  extends JFrame implements ActionListener {
                     }catch(Exception error){
                         System.out.println(error);
                     }
-                    String time= (String) table.getValueAt(row, 2);
-                    String cost = (String) table.getValueAt(row, 3);
+                    String time= (String) table.getValueAt(row, 1);
+                    // String cost = (String) table.getValueAt(row, 3);
                     String query2= "create table  if not exists `"+train_no+"`("+
-                        "train_no int ,"+
-                    "stop_no int,"+
-                    "station_id varchar(30),"+
-                    "time varchar(20),"+
-                    "cost int ,"+
-                    "foreign key (station_id) references stations(station_id),"+
-                    "foreign key (train_no) references trains(train_no)"+
-                    ");";
-                    String query3= "Insert into `"+train_no+"` values ('"+train_no+"','"+stopNo+"','"+stationId+"','"+time+"',"+Integer.parseInt(cost)+");";
+                        "train_no varchar(10),"+
+                        "stop_no integer auto_increment primary key,"+
+                        "station_id varchar(10),"+
+                        "arrival_time varchar(20),"+
+                        "cost integer,"+
+                        "foreign key (station_id) references stations(station_id),"+
+                        "foreign key (train_no) references trains(train_no)"+
+                        ");";
+                    String query3="drop trigger if exists cost;";
+                    String query4="""
+                        create trigger cost
+                        before INSERT 
+                        on """+
+                        " `"+train_no+"` "+"""
+                         for each row 
+                            BEGIN"""+
+"\nIF (select count(*) from `"+train_no+"`)=0 THEN"+"""
+                                    set new.cost=0;
+                                ELSE 
+                                    BEGIN
+                                        declare id_val int default 0;
+                                        SELECT LAST_INSERT_ID() into id_val;
+                                        set new.cost = id_val*10;
+                                    END;
+                                END IF;
+                            END;
+                                """;
+                    String query5= "Insert into `"+train_no+"`(train_no,station_id,arrival_time) values ('"+train_no+"','"+stationId+"','"+time+"');";
                     System.out.println(query2);
                     System.out.println(query3);
+                    System.out.println(query4);
+                    System.out.println(query5);
                     c.s.executeUpdate(query2);
                     c.s.executeUpdate(query3);
+                    c.s.execute(query4);
+                    c.s.executeUpdate(query5);
                     }
                 
                     JOptionPane.showMessageDialog(null, "train added successfully");
                     setVisible(false);
-                    new Admin(loginId);
+                    new Admin(adminId);
 
             } catch (Exception error) {
-                System.out.println(error);
+                error.printStackTrace();
             }
         }
     }
 
     public static void main(String[] args) {
-        new AddTrains("11111");
+        new AddTrains("suchith");
     }    
 }

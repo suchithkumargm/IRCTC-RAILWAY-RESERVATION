@@ -6,8 +6,8 @@ import java.awt.event.*;
 
 public class BookTickets extends JFrame implements ActionListener{
 
-    String source,destination,userName,sourceName,destinationName;
-
+    String source,destination,user_name,sourceName,destinationName;
+    String date_of_travel;
     JPanel mainPanel=new JPanel();
     
     static ArrayList<JPanel> panels=new ArrayList<JPanel>();
@@ -24,11 +24,12 @@ public class BookTickets extends JFrame implements ActionListener{
 
     JButton back;
     
-    BookTickets(String source,String destination,String day,String userName){
+    BookTickets(String source,String destination,String day,String user_name,String date_of_travel){
         this.source=source;
         this.destination=destination;
-        this.userName=userName;
-        
+        this.user_name=user_name;
+        this.date_of_travel=date_of_travel;
+        System.out.println(day);
         setTitle("IRCTC");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -72,7 +73,7 @@ public class BookTickets extends JFrame implements ActionListener{
             }
   
             for(int i=0;i<trains.size();i++){
-                String query="select * from (select t.train_no,t.train_name,t.start_seat,t.end_seat from (select * from trains where train_no in (select t1.train_no from `"+trains.get(i)+"` as t1 inner join `"+trains.get(i)+"` as t2 where t1.station_id='"+source+"' and t2.station_id='"+destination+"' and t1.stop_no<t2.stop_no)) as t inner join schedule as s where t.train_no =s.train_no and s.wednesday='y') as sample1 inner join (select t1.train_no,t1.time as arrival_time,t2.time as reach_time,(t2.cost-t1.cost) as cost from `"+trains.get(i)+"` as t1 inner join `"+trains.get(i)+"` as t2 inner join schedule as s where t1.station_id='"+source+"' and t2.station_id='"+destination+"' and s.train_no="+trains.get(i)+" and s."+day+"='y' ) as sample2 where sample1.train_no=sample2.train_no;";
+                String query="select * from (select t.train_no,t.train_name,t.start_seat,t.end_seat from (select * from trains where train_no in (select t1.train_no from `"+trains.get(i)+"` as t1 inner join `"+trains.get(i)+"` as t2 where t1.station_id='"+source+"' and t2.station_id='"+destination+"' and t1.stop_no<t2.stop_no)) as t inner join schedule as s where t.train_no =s.train_no and s.wednesday='y') as sample1 inner join (select t1.train_no,t1.arrival_time as arrival_time,t2.arrival_time as reach_time,(t2.cost-t1.cost) as cost from `"+trains.get(i)+"` as t1 inner join `"+trains.get(i)+"` as t2 inner join schedule as s where t1.station_id='"+source+"' and t2.station_id='"+destination+"' and s.train_no="+trains.get(i)+" and s."+day+"='y' ) as sample2 where sample1.train_no=sample2.train_no;";
 
                 rs=c.s.executeQuery(query);
                 if(rs.next()){
@@ -142,7 +143,7 @@ public class BookTickets extends JFrame implements ActionListener{
 
         JLabel sourcLabel=new JLabel(sourceName.toUpperCase());
         sourcLabel.setFont(new Font("Raleway", Font.BOLD, 20));
-        sourcLabel.setBounds(25,80,200,40);
+        sourcLabel.setBounds(25,80,250,40);
         sourcLabel.setBackground(Color.white);
         sourcLabel.setOpaque(true);
 
@@ -154,7 +155,7 @@ public class BookTickets extends JFrame implements ActionListener{
 
         JLabel destinLabel=new JLabel(destinationName.toUpperCase());
         destinLabel.setFont(new Font("Raleway", Font.BOLD, 20));
-        destinLabel.setBounds(390,80,200,40);
+        destinLabel.setBounds(350,80,250,40);
         destinLabel.setBackground(Color.white);
         destinLabel.setOpaque(true);
 
@@ -206,19 +207,19 @@ public class BookTickets extends JFrame implements ActionListener{
                 BookedTrain details=new BookedTrain(train_no.get(i),train_name.get(i),source,destination,arrivalTime.get(i),destinationTime.get(i),costOfTravel.get(i),seatsAvailable.get(i));
 
                 setVisible(false);
-                new AddPassengers(details,userName).setVisible(true);
+                new AddPassengers(details,user_name,date_of_travel).setVisible(true);
             }
         }
         if(e.getSource()==back){
 
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             setVisible(false);
-            new SearchTrains(userName);
+            new SearchTrains(user_name);
         }
     }
     public static void main(String args[])
     {
-        new BookTickets("ypr","bay","wednesday","suchith");
+        new BookTickets("sbc","kjm","wednesday","suchith","01-04-2023");
 
     }
 

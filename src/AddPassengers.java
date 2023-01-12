@@ -18,21 +18,21 @@ public class AddPassengers extends JFrame implements ActionListener {
     JScrollPane pane;
     Object[] cols = null;
     int train_no, seats = 0,start = 0, end = 0,cost,pass_num = 0;
-    String Pnrnum,train_name,source,destination,arrivalTime,destinationTime;
+    String Pnr_no,train_name,source,destination,arrival_time,destinationTime;
     String sourceName,destinationName;
-    String user_name;
+    String user_name,date_of_travel;
     int seatsAvailable;
     ArrayList<String> Pnrlist=new ArrayList<String>();
     JPanel tablePanel;
     
-    AddPassengers(BookedTrain details, String user_name) {
+    AddPassengers(BookedTrain details, String user_name,String date_of_travel) {
         this.user_name = user_name;
-        
+        this.date_of_travel=date_of_travel;
         train_no = details.train_no;
         train_name = details.train_name;
         source = details.source;
         destination = details.destination;
-        arrivalTime = details.arrivalTime;
+        arrival_time = details.arrival_time;
         destinationTime = details.destination;
         cost = details.cost;
         seatsAvailable = details.seatsAvailable;
@@ -49,13 +49,13 @@ public class AddPassengers extends JFrame implements ActionListener {
                 Pnrlist.add(rs.getString("pnr_no"));
             }
             // System.out.println(Pnrlist);
-            rs=c.s.executeQuery("select station_name from station where station_id='"+source+"';");
+            rs=c.s.executeQuery("select station_name from stations where station_id='"+source+"';");
             if(rs.next()){
                 sourceName=rs.getString("station_name");
                 System.out.println(sourceName);
             }
 
-            rs=c.s.executeQuery("select station_name from station where station_id='"+destination+"';");
+            rs=c.s.executeQuery("select station_name from stations where station_id='"+destination+"';");
             if(rs.next()){
                 destinationName=rs.getString("station_name");
                 System.out.println(destinationName);
@@ -67,9 +67,9 @@ public class AddPassengers extends JFrame implements ActionListener {
         while(true){
             Random ran = new Random();
             long first7 = (ran.nextLong() % 90000000L) + 2356000000L;
-            Pnrnum = "" + Math.abs(first7);
-            if(!Pnrlist.contains(Pnrnum)){
-                System.out.println(Pnrnum);
+            Pnr_no = "" + Math.abs(first7);
+            if(!Pnrlist.contains(Pnr_no)){
+                System.out.println(Pnr_no);
                 break;
             }
         }
@@ -89,11 +89,11 @@ public class AddPassengers extends JFrame implements ActionListener {
 
         JLabel sourcLabel=new JLabel(sourceName.toUpperCase());
         sourcLabel.setFont(new Font("Raleway", Font.BOLD, 20));
-        sourcLabel.setBounds(145,165,200,40);
+        sourcLabel.setBounds(145,165,250,40);
         sourcLabel.setBackground(Color.white);
         sourcLabel.setOpaque(true);
 
-        JLabel arrivalLabel=new JLabel(details.arrivalTime);
+        JLabel arrivalLabel=new JLabel(details.arrival_time);
         arrivalLabel.setFont(new Font("Raleway", Font.PLAIN, 16));
         arrivalLabel.setBounds(145,200,100,30);
         arrivalLabel.setBackground(Color.white);
@@ -101,7 +101,7 @@ public class AddPassengers extends JFrame implements ActionListener {
 
         JLabel destinLabel=new JLabel(destinationName.toUpperCase());
         destinLabel.setFont(new Font("Raleway", Font.BOLD, 20));
-        destinLabel.setBounds(507,165,200,40);
+        destinLabel.setBounds(507,165,250,40);
         destinLabel.setBackground(Color.white);
         destinLabel.setOpaque(true);
 
@@ -267,7 +267,7 @@ public class AddPassengers extends JFrame implements ActionListener {
                 panel.setVisible(true);
                 submit.setVisible(true);
                 back.setVisible(true);
-                model.addRow(new Object[] { PassengerName.getText(), Age.getText(), gender, Pnrnum, cost });
+                model.addRow(new Object[] { PassengerName.getText(), Age.getText(), gender, Pnr_no, cost });
                 pass_num++;
                 seats++;
             }
@@ -289,6 +289,11 @@ public class AddPassengers extends JFrame implements ActionListener {
                 Conn c = new Conn();
                 int rows = table.getRowCount();
                 System.out.println(rows);
+                String query2="Insert into pnr_status(pnr_no,train_no,train_name,`from`,`to`,date_of_travel)values('"+Pnr_no+"','"+train_no+"','"+train_name+"','"+source+"','"+destination+"','"+date_of_travel+"')";
+                System.out.println(query2);
+
+                
+                c.s.executeUpdate(query2);
                 ResultSet rs = c.s.executeQuery("select * from trains where train_no ='" + train_no + "'");
                 if (rs.next()) {
                     start = rs.getInt("start_seat");
@@ -315,12 +320,13 @@ public class AddPassengers extends JFrame implements ActionListener {
                         String query1 = "Update Trains set start_seat='" + start + "' where train_no='" + train_no
                         + "'";
                         c.s.executeUpdate(query1);
+
                         setVisible(false);
                         // new
                         // ConfirmBooking(train_no,train_name,source,destination,arrivalTime,destinationTime,Pnrnum,total,seats,user_name).setVisible(true);
 
-                        BookedTrain details = new BookedTrain(train_no, train_name, source, destination, arrivalTime,destinationTime, total, seatsAvailable);
-                        new ConfirmBooking(details, Pnrnum, user_name, seats,sourceName,destinationName);
+                        BookedTrain details = new BookedTrain(train_no, train_name, source, destination, arrival_time,destinationTime, total, seatsAvailable);
+                        new ConfirmBooking(details, Pnr_no, user_name, seats,sourceName,destinationName,date_of_travel);
 
                     } else {
                         JOptionPane.showMessageDialog(null, "No seats available \n only  " + avail + " are available");
@@ -337,7 +343,7 @@ public class AddPassengers extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        BookedTrain details = new BookedTrain(100, "hampi", "ksr", "ypr", "sd", "sd", 10, 10);
-        new AddPassengers(details, "shas");
+        BookedTrain details = new BookedTrain(22626, "Mas Double Decker", "sbc", "csmt", "20:40", "20:15", 360, 30);
+        new AddPassengers(details, "shas","01-04-2023");
     }
 }

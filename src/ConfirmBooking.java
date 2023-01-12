@@ -18,17 +18,17 @@ public class ConfirmBooking extends JFrame implements ActionListener {
     Object[] cols = null;
     DefaultTableModel model;
     static Box vertical = Box.createVerticalBox();
-    String Pnrnum;
+    String Pnr_no;
     int train_no,total,seats;
-    String train_name ,source,destination ,arrivalTime ,destinationTime ,user_name,timeStamp;
-    String email,genOtp;
+    String train_name ,source,destination ,arrival_time ,destinationTime ,user_name,timeStamp;
+    String email,genOtp,date_of_travel;
     boolean buttonPressed = false;
     int seatsAvailable;
     BookedTrain details;
     JPanel panel3;
 
-        ConfirmBooking(BookedTrain details,String Pnrnum,String user_name,int seats,String sourceName,String destinationName){
-
+        ConfirmBooking(BookedTrain details,String Pnr_no,String user_name,int seats,String sourceName,String destinationName,String date_of_travel){
+            this.date_of_travel=date_of_travel;
             this.details=details;
             train_no = details.train_no;
             train_name = details.train_name;
@@ -36,9 +36,9 @@ public class ConfirmBooking extends JFrame implements ActionListener {
             destination =details. destination; 
             seatsAvailable=details.seatsAvailable; 
             // System.out.println(train_no); 
-            arrivalTime = details.arrivalTime;
+            arrival_time = details.arrival_time;
             destinationTime = details.destinationTime;
-            this.Pnrnum=Pnrnum;
+            this.Pnr_no=Pnr_no;
             total=details.cost;
             this.seats=seats;
             this.user_name=user_name;
@@ -77,7 +77,7 @@ public class ConfirmBooking extends JFrame implements ActionListener {
             froms.setFont(new Font("Raleway", Font.BOLD, 20));
             panel.add(froms);
 
-            JLabel from1 = new JLabel( sourceName+" ("+arrivalTime+")" );
+            JLabel from1 = new JLabel( sourceName+" ("+arrival_time+")" );
             // + " " + source + " " + destination + " " + arrivalTime
             //         + " " + destinationTime
             from1.setBounds(410, 45, 500, 50);
@@ -196,7 +196,7 @@ public class ConfirmBooking extends JFrame implements ActionListener {
                     panel3.setVisible(true);
                     Conn c = new Conn();
                     // String Pnrnum="2276717745";
-                    ResultSet rs = c.s.executeQuery("select * from Passengers where pnr_no = '" + Pnrnum + "'");
+                    ResultSet rs = c.s.executeQuery("select * from Passengers where pnr_no = '" + Pnr_no+ "'");
                 while (rs.next()) {
 
                     String name = rs.getString("Name");
@@ -226,16 +226,16 @@ public class ConfirmBooking extends JFrame implements ActionListener {
                         int rows = table.getRowCount();
                         System.out.println(rows);
         
-                        String query = "Insert into pnr_status(pnr_no,train_no,train_name,from_station,to_station) values ('"+Pnrnum+"','"+train_no+"','"+train_name+"','"+source+"','"+destination+"')";
+                        // String query = "Insert into pnr_status(pnr_no,train_no,train_name,from_station,to_station) values ('"+Pnr_no+"','"+train_no+"','"+train_name+"','"+source+"','"+destination+"')";
 
-                        c.s.executeUpdate(query);
+                        // c.s.executeUpdate(query);
                                     //insert into booking
                                     
-                        String query2 = "Insert into bookings(booking_id,pnr_no,user_name,date,ticket_cost) values ('"+booking_id+"','"+Pnrnum+"','"+user_name+"','"+timeStamp+"','"+total+"')";
+                        String query2 = "Insert into bookings(booking_id,pnr_no,user_name,date,ticket_cost) values ('"+booking_id+"','"+Pnr_no+"','"+user_name+"','"+timeStamp+"','"+total+"')";
                         c.s.executeUpdate(query2);
 
                         ArrayList<String> details=new ArrayList<String>();
-                        details.add("PNR NUM    :"+Pnrnum);
+                        details.add("PNR NUM    :"+Pnr_no);
                         details.add("USER NAME  :"+user_name);
                         details.add("SOURCE     :"+source);
                         details.add("DESTINATION:"+destination);
@@ -273,16 +273,18 @@ public class ConfirmBooking extends JFrame implements ActionListener {
         else if (e.getSource() == back) {
             try{
                 Conn c=new Conn();
-                String query="delete from passengers where pnr_no='"+Pnrnum+"';";
+                String query="delete from passengers where pnr_no='"+Pnr_no+"';";
+                String query3="delete from pnr_status where pnr_no='"+Pnr_no+"';";
                 String query1="update trains set start_seat=start_seat-"+seats+ " where train_no="+train_no+";";
                 c.s.executeUpdate(query1);
                 c.s.executeUpdate(query);
+                c.s.executeUpdate(query3);
             }catch(Exception error){
                 System.out.println(error);
             }
             setVisible(false);
             System.out.println(source+"  "+destination);
-            new AddPassengers(details,user_name).setVisible(true);
+            new AddPassengers(details,user_name,date_of_travel).setVisible(true);
         } 
 
 
@@ -301,8 +303,9 @@ public class ConfirmBooking extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        BookedTrain details = new BookedTrain(101, "HAMPI EXPRESS", "ypr", "bay", "11:00", "2:00", 10,10);
 
-        new ConfirmBooking(details,"54654655","sukanya",40,"bellary","solapur");
+        BookedTrain details = new BookedTrain(22626, "Mas Double Decker", "sbc", "csmt", "20:40", "20:15", 360, 30);
+
+        new ConfirmBooking(details,"54654655","shas",30,"bellary","solapur","01-04-2023");
     }
 }
