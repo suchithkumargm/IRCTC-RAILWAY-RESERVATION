@@ -62,7 +62,7 @@ public class AddPassengers extends JFrame implements ActionListener {
             }
         }
         catch(Exception error){
-            System.out.println(error);
+            error.printStackTrace();
         }
         while(true){
             Random ran = new Random();
@@ -267,7 +267,7 @@ public class AddPassengers extends JFrame implements ActionListener {
                 panel.setVisible(true);
                 submit.setVisible(true);
                 back.setVisible(true);
-                model.addRow(new Object[] { PassengerName.getText(), Age.getText(), gender, Pnr_no, cost });
+                model.addRow(new Object[] { PassengerName.getText(), Age.getText(), gender, cost });
                 pass_num++;
                 seats++;
             }
@@ -309,10 +309,10 @@ public class AddPassengers extends JFrame implements ActionListener {
                             String PName = (String) table.getValueAt(row, 0);
                             String age = (String) table.getValueAt(row, 1);
                             String gen = (String) table.getValueAt(row, 2);
-                            String Pnr = (String) table.getValueAt(row, 3);
+                            // String Pnr = (String) table.getValueAt(row, 3);
 
                             String query = "Insert into Passengers(Name,Age,gender,pnr_no,seat_no) values ('" + PName
-                                    + "','" + age + "','" + gen + "','" + Pnr + "','" + (++start) + "')";
+                                    + "','" + age + "','" + gen + "','" + Pnr_no + "','" + (++start) + "')";
                             c.s.executeUpdate(query);
                             // System.out.println(PName+ " "+age+ " "+gen+" "+Pnrnum);
                         }
@@ -337,7 +337,7 @@ public class AddPassengers extends JFrame implements ActionListener {
                     // setVisible(false);
                 }
             } catch (Exception error) {
-                System.out.println(error);
+                error.printStackTrace();
             }
         }
     }

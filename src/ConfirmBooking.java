@@ -22,6 +22,7 @@ public class ConfirmBooking extends JFrame implements ActionListener {
     int train_no,total,seats;
     String train_name ,source,destination ,arrival_time ,destinationTime ,user_name,timeStamp;
     String email,genOtp,date_of_travel;
+    String sourceName,destinationName;
     boolean buttonPressed = false;
     int seatsAvailable;
     BookedTrain details;
@@ -42,6 +43,8 @@ public class ConfirmBooking extends JFrame implements ActionListener {
             total=details.cost;
             this.seats=seats;
             this.user_name=user_name;
+            this.sourceName=sourceName;
+            this.destinationName=destinationName;
             setTitle("IRCTC");
 
             JPanel headerPanel=new JPanel();
@@ -237,8 +240,8 @@ public class ConfirmBooking extends JFrame implements ActionListener {
                         ArrayList<String> details=new ArrayList<String>();
                         details.add("PNR NUM    :"+Pnr_no);
                         details.add("USER NAME  :"+user_name);
-                        details.add("SOURCE     :"+source);
-                        details.add("DESTINATION:"+destination);
+                        details.add("SOURCE     :"+sourceName);
+                        details.add("DESTINATION:"+destinationName);
                         details.add("TIME       :"+timeStamp);
                         details.add("BOOKING ID :"+booking_id);
                         details.add("NUM SEATS  :"+String.valueOf(seats));
