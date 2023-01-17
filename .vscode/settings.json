@@ -8,6 +8,12 @@
         "javax.mail.jar",
         "jcalendar-tz-1.3.3-4.jar",
         "mysql-connector-j-8.0.31.jar",
-        "smtp-1.4.5.jar"
+        "smtp-1.4.5.jar",
+        "Jar Files/activation.jar",
+        "Jar Files/common-lang3.jar",
+        "Jar Files/javax.mail.jar",
+        "Jar Files/jcalendar-tz-1.3.3-4.jar",
+        "Jar Files/mysql-connector-j-8.0.31.jar",
+        "Jar Files/smtp-1.4.5.jar"
     ]
 }

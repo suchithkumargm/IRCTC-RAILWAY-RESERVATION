@@ -43,7 +43,7 @@ insert into trains values('11302','Udyan Express',0,30,'shashidhar');
 
 -- retreive train details
 select * from trains;
-
+desc trains;
 -- schedule for trains
 insert into schedule values('11302','y','y','y','y','y','y','y');
 insert into schedule values('12627','y','y','y','y','y','y','y');

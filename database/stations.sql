@@ -7,7 +7,6 @@ station_id varchar(10) primary key,
 station_name varchar(50)
 );
 
-
 -- insert values into stations table
 
 insert into stations values('YPR','YESVANTPUR JN');

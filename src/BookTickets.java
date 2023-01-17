@@ -219,7 +219,7 @@ public class BookTickets extends JFrame implements ActionListener{
     }
     public static void main(String args[])
     {
-        new BookTickets("sbc","kjm","wednesday","suchith","01-04-2023");
+        new BookTickets("ypr","bay","wednesday","suchith","01-04-2023");
 
     }
 

@@ -3,7 +3,7 @@ use irctcproject;
 
 -- 16545 YPR HPT EXP
 create table `11302`(
-    train_no varchar(10),
+    train_no varchar(10) references train(train_no),
     stop_no integer auto_increment primary key,
     station_id varchar(10),
     arrival_time varchar(20),
@@ -11,27 +11,26 @@ create table `11302`(
 );
 
 -- trigger for adding cost with respect to stop_no
-drop trigger if exists cost;
-delimiter $$
-create trigger cost
-before INSERT 
-on 
--- change only train_no for each train
-`12627` 	
-for each row 
+DROP TRIGGER IF EXISTS cost;
+DELIMITER $$
+CREATE TRIGGER  cost
+BEFORE INSERT
+ON 
+`<train_no>` 	
+FOR EACH ROW 
 	BEGIN
-		IF (select count(*) from `12627`)=0 THEN
-			set new.cost=0;
+		IF (SELECT count(*) FROM`12627`)=0 THEN
+			SET NEW.cost=0;
 		ELSE 
 			BEGIN
-				declare id_val int default 0;
-				SELECT LAST_INSERT_ID() into id_val;
-				set new.cost = id_val*10;
+				DECLARE id_val INT DEFAULT 0;
+				SELECT LAST_INSERT_ID() INTO id_val;
+				SET NEW.cost = id_val*10;
 			END;
 		END IF;
 	END;
 $$
-delimiter ;
+DELIMITER ;
 
 -- insert values into train 16545
 insert into `16545`(train_no,station_id,arrival_time) values('16545','YPR','20:25');
