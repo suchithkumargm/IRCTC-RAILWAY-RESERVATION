@@ -5,6 +5,8 @@ import com.toedter.calendar.JDateChooser;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,6 +16,8 @@ public class Register extends JFrame implements ActionListener{
     JDateChooser dateChooser;
     JRadioButton male,female,other,indian,foreign;
     JButton register,back;
+    static String EMAIL_REGEX = "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-z]{2,})$";
+    static Pattern PATTERN = Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
 
     Register(){
         setTitle("IRCTC");
@@ -203,67 +207,73 @@ public class Register extends JFrame implements ActionListener{
                 else if(foreign.isSelected())
                     natiolaity="Foreign";
 
-                try{                                                        
-                    Conn c=new Conn();
+                if(validate(emailText)){
+                
+                    try{                                                        
+                        Conn c=new Conn();
 
-                    ResultSet rs=c.s.executeQuery("SELECT COUNT(user_name) as valid FROM user_login WHERE user_name='"+userName.getText()+"';");
-                    if(rs.next()){
-                        if(rs.getInt("valid")!=0){
-                            JOptionPane.showMessageDialog(null,"Sorry this user name is already taken!!"); 
-                            userName.setText("");
-                        }else if(StringUtils.containsWhitespace(userName.getText())){
-                            JOptionPane.showMessageDialog(null,"user name can not contain white spaces"); 
-                        }
-                        else{
-                            String genOtp=String.copyValueOf(OTP(4));
-                            System.out.print("Your OTP is : "+genOtp);
-                            SendOTP.sendOTP(genOtp,emailText);
-                            String enteredOtp= JOptionPane.showInputDialog("Enter the otp sent to your email "); 
-                            System.out.println(enteredOtp);
-                            if(genOtp.equals(enteredOtp)){
-                                System.out.println("correct");
-                                String query1="insert into user(user_name,first_name,last_name,gender,address,nationality,dob,phone)values ('"+userNameText+"','"+firstNameText+"','"+lastNameText+"','"+gender+"','"+addressText+"','"+natiolaity+"','"+dob+"','"+phoneText+"')";
-                                String query2="insert into user_login(user_name,password,email) values('"+userNameText+"','"+passwordText+"','"+emailText+"')";
-                                c.s.executeUpdate(query1);
-                                c.s.executeUpdate(query2);
-    
-                                JOptionPane.showMessageDialog(null,"Please wait we register your account"); 
+                        ResultSet rs=c.s.executeQuery("SELECT COUNT(user_name) as valid FROM user_login WHERE user_name='"+userName.getText()+"';");
+                        if(rs.next()){
+                            if(rs.getInt("valid")!=0){
+                                JOptionPane.showMessageDialog(null,"Sorry this user name is already taken!!"); 
+                                userName.setText("");
+                            }else if(StringUtils.containsWhitespace(userName.getText())){
+                                JOptionPane.showMessageDialog(null,"user name can not contain white spaces"); 
+                            }
+                            else{
+                                String genOtp=String.copyValueOf(OTP(4));
+                                System.out.print("Your OTP is : "+genOtp);
+                                SendOTP.sendOTP(genOtp,emailText);
+                                String enteredOtp= JOptionPane.showInputDialog("Enter the otp sent to your email "); 
+                                System.out.println(enteredOtp);
+                                if(genOtp.equals(enteredOtp)){
+                                    System.out.println("correct");
+                                    String query1="insert into user(user_name,first_name,last_name,gender,address,nationality,dob,phone)values ('"+userNameText+"','"+firstNameText+"','"+lastNameText+"','"+gender+"','"+addressText+"','"+natiolaity+"','"+dob+"','"+phoneText+"')";
+                                    String query2="insert into user_login(user_name,password,email) values('"+userNameText+"','"+passwordText+"','"+emailText+"')";
+                                    c.s.executeUpdate(query1);
+                                    c.s.executeUpdate(query2);
+        
+                                    JOptionPane.showMessageDialog(null,"Please wait we register your account"); 
 
-                                ArrayList<String> details=new ArrayList<String>();
-                                details.add("USER NAME   : "+userNameText);
-                                details.add("FIRST NAME  : "+firstNameText);
-                                details.add("LAST NAME   : "+lastNameText);
-                                details.add("PASSWORD    : "+passwordText);
-                                details.add("EMAIL       : "+emailText);
-                                details.add("GENDER      : "+gender);
-                                details.add("ADDRESS     : "+addressText);
-                                details.add("NATIONALITY : "+natiolaity);
-                                details.add("DOB         : "+dob);
-                                details.add("PHONE       : "+phoneText);
-                                
-                                rs = c.s.executeQuery("SELECT email  FROM user_login WHERE user_name='"+userNameText+"';");
-                                
-                                if(rs.next()){
-                                    emailText=rs.getString("email");
-                                    System.out.println(email);
-                                    MailAttachment.sendConfirmation(emailText,userNameText,details,"Registration successfull","\n\nYour Account is successfully created in IRCTC \n\nDETAILS :\n\n");
-                                    JOptionPane.showMessageDialog(null,"Registration successfull...Details are sent to your mail ...Please login"); 
-                                    setVisible(false);
-                                    new Login().setVisible(true);
-                                    }
-                                    else{
-                                        JOptionPane.showMessageDialog(null,"Sorry!! There was some error..Please try again"); 
+                                    ArrayList<String> details=new ArrayList<String>();
+                                    details.add("USER NAME   : "+userNameText);
+                                    details.add("FIRST NAME  : "+firstNameText);
+                                    details.add("LAST NAME   : "+lastNameText);
+                                    details.add("PASSWORD    : "+passwordText);
+                                    details.add("EMAIL       : "+emailText);
+                                    details.add("GENDER      : "+gender);
+                                    details.add("ADDRESS     : "+addressText);
+                                    details.add("NATIONALITY : "+natiolaity);
+                                    details.add("DOB         : "+dob);
+                                    details.add("PHONE       : "+phoneText);
+                                    
+                                    rs = c.s.executeQuery("SELECT email  FROM user_login WHERE user_name='"+userNameText+"';");
+                                    
+                                    if(rs.next()){
+                                        emailText=rs.getString("email");
+                                        System.out.println(email);
+                                        MailAttachment.sendConfirmation(emailText,userNameText,details,"Registration successfull","\n\nYour Account is successfully created in IRCTC \n\nDETAILS :\n\n");
+                                        JOptionPane.showMessageDialog(null,"Registration successfull...Details are sent to your mail ...Please login"); 
                                         setVisible(false);
                                         new Login().setVisible(true);
-                                    }
-                                    }
-                            }                          
-                        }
-                }catch(Exception error){
-                    JOptionPane.showMessageDialog(null,"Invalid Entries..Please Try again"); 
-                    System.out.println(error);
-                    setVisible(false);
-                    new Register().setVisible(true);
+                                        }
+                                        else{
+                                            JOptionPane.showMessageDialog(null,"Sorry!! There was some error..Please try again"); 
+                                            setVisible(false);
+                                            new Login().setVisible(true);
+                                        }
+                                        }
+                                }                          
+                            }
+                    }catch(Exception error){
+                        JOptionPane.showMessageDialog(null,"Invalid Entries..Please Try again"); 
+                        System.out.println(error);
+                        setVisible(false);
+                        new Register().setVisible(true);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Invalid format for email ID");
+                    email.setText("");
                 }
             }
         }
@@ -284,6 +294,11 @@ public class Register extends JFrame implements ActionListener{
         }
         return otp;
     }
+    public static boolean validate(String email) {
+        Matcher matcher = PATTERN.matcher(email);
+        return matcher.matches();
+    }
+
     public static void main(String[] args) {
         new Register();
     }

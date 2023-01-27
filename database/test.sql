@@ -56,3 +56,32 @@ DELIMITER ;
 call sp_GetMovies();
 
 select * from ex;
+
+DELIMITER $$
+	CREATE PROCEDURE showtrains ()
+    BEGIN
+		SELECT train_no ,train_name FROM trains;
+        END $$
+DELIMITER ;
+call showtrains();
+
+DROP TRIGGER IF EXISTS cost;
+DELIMITER $$
+CREATE TRIGGER   cost
+BEFORE INSERT
+ON 
+`<train_no>` 	
+FOR EACH ROW 
+	BEGIN
+		IF (SELECT count (*) FROM `<train_no>`)=0 THEN
+			SET NEW. cost = 0;
+		ELSE 
+			BEGIN
+				DECLARE id_val INT DEFAULT 0;
+				SELECT LAST_INSERT_ID () INTO id_val;
+				SET NEW. cost = id_val *10;
+			END;
+		END IF;
+	END;
+$$
+DELIMITER ;
